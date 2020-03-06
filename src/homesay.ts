@@ -47,7 +47,6 @@ function searchDeviceIp({
         browser.on("update", (service: any) => {
             const dev = parseService(service);
             if (dev) {
-                console.log(dev);
                 if ((name && matchName(dev.name, name)) || !name) {
                     if (timer) clearTimeout(timer);
                     browser.stop();
