@@ -9,6 +9,15 @@
             "node",
             "jest"
         ],
+        "typeRoots": [
+            "./src/@types",
+            "./node_modules/@types"
+        ],
+        "paths": {
+            "mdns-js": [
+                "./src/@types/mdns-js"
+            ]
+        },
         "esModuleInterop": true,
         "inlineSourceMap": true,
         "noUnusedLocals": true,
