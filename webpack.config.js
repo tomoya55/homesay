@@ -2,7 +2,10 @@ const path = require("path");
 
 module.exports = {
     mode: "production",
-    entry: "./src/index.ts",
+    entry: {
+        index: "./src/index.ts",
+        cli: "./src/cli.ts",
+    },
     devtool: "inline-source-map",
     module: {
         rules: [
@@ -18,7 +21,7 @@ module.exports = {
     },
     target: "node",
     output: {
-        filename: "index.js",
+        filename: "[name].js",
         path: path.resolve(__dirname, "dist"),
         libraryTarget: "umd",
     },

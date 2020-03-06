@@ -5,6 +5,9 @@
     "files": [
         "dist"
     ],
+    "bin": {
+        "homesay": "dist/cli.js"
+    },
     "license": "MIT",
     "repository": {
         "type": "git",
@@ -30,11 +33,11 @@
         "webpack-cli": "^3.3.11"
     },
     "scripts": {
-        "dev": "ts-node scripts/run",
+        "dev": "ts-node src/cli",
         "format": "prettier --write \"{src,text}/**/*.{ts,tsx}\"",
         "clean": "rm -rf dist",
         "prebuild": "yarn run clean",
         "build": "webpack",
-        "prepublish": "npm run build"
+        "prepublish": "yarn run build"
     }
 }
