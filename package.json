@@ -1,0 +1,25 @@
+{
+  "name": "homesay",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "castv2-client": "^1.2.0",
+    "mdns": "^2.5.1",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.3",
+    "@types/mdns": "^0.0.33",
+    "@types/node": "^13.7.7",
+    "@types/node-fetch": "^2.5.5",
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "dev": "ts-node scripts/run",
+    "format": "prettier --write \"{src,text}/**/*.{ts,tsx}\""
+  }
+}
