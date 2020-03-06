@@ -24,6 +24,7 @@
         "@types/mdns": "^0.0.33",
         "@types/node": "^13.7.7",
         "@types/node-fetch": "^2.5.5",
+        "copy-webpack-plugin": "^5.1.1",
         "jest": "^25.1.0",
         "prettier": "^1.19.1",
         "ts-loader": "^6.2.1",
@@ -37,7 +38,7 @@
         "format": "prettier --write \"{src,text}/**/*.{ts,tsx}\"",
         "clean": "rm -rf dist",
         "prebuild": "yarn run clean",
-        "build": "webpack",
+        "build": "webpack && chmod +x dist/cli.js",
         "prepublish": "yarn run build"
     }
 }
