@@ -1,4 +1,4 @@
-import mdns from "mdns";
+import mdns from "mdns-js";
 import http from "http";
 import url from "url";
 import { lookup } from "dns";
@@ -12,8 +12,27 @@ const getLocalIp = (): Promise<string> =>
         (r: { address: string; family: number }): string => r.address
     );
 
-const matchName = (service: mdns.Service, name: string) =>
-    name.replace(/\s+/g, "") === service.txtRecord.fn.replace(/\s+/g, "");
+const matchName = (deviceName: string, name: string) =>
+    name.replace(/\s+/g, "") === deviceName.replace(/\s+/g, "");
+
+export type BrowsedDevice = {
+    device_id: string;
+    name: string;
+    address: string;
+    port: number;
+};
+
+function parseService(service: any): BrowsedDevice | undefined {
+    const txt = service["txt"];
+    if (txt && txt.length >= 7) {
+        return {
+            device_id: service["txt"][0].split("=")[1]!,
+            name: service["txt"][6].split("=")[1]!,
+            address: service["addresses"][0]!,
+            port: service["port"]!,
+        };
+    }
+}
 
 function searchDeviceIp({
     name,
@@ -24,14 +43,19 @@ function searchDeviceIp({
 }): Promise<string> {
     return new Promise((resolve, reject) => {
         const browser = mdns.createBrowser(mdns.tcp("googlecast"));
-        browser.start();
-        browser.on("serviceUp", service => {
-            if ((name && matchName(service, name)) || !name) {
-                const ip = service.addresses[0];
-                resolve(ip);
+        browser.on("ready", () => browser.discover());
+        browser.on("update", (service: any) => {
+            const dev = parseService(service);
+            if (dev) {
+                console.log(dev);
+                if ((name && matchName(dev.name, name)) || !name) {
+                    if (timer) clearTimeout(timer);
+                    browser.stop();
+                    resolve(dev.address);
+                }
             }
         });
-        setTimeout(() => {
+        const timer = setTimeout(() => {
             browser.stop();
             reject();
         }, timeout);
@@ -116,10 +140,12 @@ export const homesay = async (
 
         const s = createAudioServer(buf);
         s.listen(port, async () => {
+            console.log(`listening on ${port}`);
             try {
                 const deviceIp = await searchDeviceIp({ name: deviceName });
                 await connectFromHomeAndPlay(deviceIp, await audioUrl(port));
             } finally {
+                console.log("shutting down the server");
                 s.close();
             }
         });

@@ -16,7 +16,7 @@
     "author": "Tomoya Hirano <tomoya@nicecabbage.com>",
     "dependencies": {
         "castv2-client": "^1.2.0",
-        "mdns": "^2.5.1",
+        "mdns-js": "^1.0.3",
         "node-fetch": "^2.6.0"
     },
     "devDependencies": {
