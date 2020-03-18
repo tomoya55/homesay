@@ -56,7 +56,7 @@ function searchDeviceIp({
         });
         const timer = setTimeout(() => {
             browser.stop();
-            reject();
+            reject("cannot find any Google home device in your local network");
         }, timeout);
     });
 }
@@ -107,7 +107,6 @@ function connectFromHomeAndPlay(deviceIP: string, contentId: string) {
                         },
                         { autoplay: true },
                         () => {
-                            console.log("done");
                             client.close();
                             resolve();
                         }
@@ -126,6 +125,7 @@ export const homesay = async (
     voice_text_api_key: string,
     message: string,
     deviceName?: string,
+    deviceIp?: string,
     port = 18086
 ) => {
     const ttsOptions: VoiceTextOptions = {
@@ -135,16 +135,16 @@ export const homesay = async (
     };
 
     try {
+        const ip = deviceIp || (await searchDeviceIp({ name: deviceName }));
         const buf = await new VoiceText().synth(ttsOptions);
 
         const s = createAudioServer(buf);
         s.listen(port, async () => {
-            console.log(`listening on ${port}`);
             try {
-                const deviceIp = await searchDeviceIp({ name: deviceName });
-                await connectFromHomeAndPlay(deviceIp, await audioUrl(port));
+                await connectFromHomeAndPlay(ip, await audioUrl(port));
+            } catch (e) {
+                console.error(e);
             } finally {
-                console.log("shutting down the server");
                 s.close();
             }
         });
