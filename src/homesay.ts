@@ -34,7 +34,7 @@ function parseService(service: any): BrowsedDevice | undefined {
     }
 }
 
-function searchDeviceIp({
+export function searchDeviceIp({
     name,
     timeout = 3000,
 }: {
@@ -87,7 +87,7 @@ const createAudioServer = (buf: Buffer) =>
 const audioUrl = async (port: number) =>
     `http://${await getLocalIp()}:${port}/voice.mp3`;
 
-function connectFromHomeAndPlay(deviceIP: string, contentId: string) {
+function playContent(deviceIP: string, contentId: string) {
     return new Promise<void>((resolve, reject) => {
         const client = new castv2.Client();
 
@@ -141,7 +141,7 @@ export const homesay = async (
         const s = createAudioServer(buf);
         s.listen(port, async () => {
             try {
-                await connectFromHomeAndPlay(ip, await audioUrl(port));
+                await playContent(ip, await audioUrl(port));
             } catch (e) {
                 console.error(e);
             } finally {
