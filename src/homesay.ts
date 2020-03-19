@@ -122,34 +122,27 @@ function playContent(deviceIP: string, contentId: string) {
 }
 
 export const homesay = async (
-    voice_text_api_key: string,
-    message: string,
+    ttsOptions: VoiceTextOptions,
     deviceName?: string,
     deviceIp?: string,
     port = 18086
 ) => {
-    const ttsOptions: VoiceTextOptions = {
-        apikey: voice_text_api_key,
-        text: message,
-        format: "mp3",
-    };
+    return new Promise(async (resolve, reject) => {
+        try {
+            const ip = deviceIp || (await searchDeviceIp({ name: deviceName }));
+            const buf = await new VoiceText().synth(ttsOptions);
 
-    try {
-        const ip = deviceIp || (await searchDeviceIp({ name: deviceName }));
-        const buf = await new VoiceText().synth(ttsOptions);
-
-        const s = createAudioServer(buf);
-        s.listen(port, async () => {
-            try {
-                await playContent(ip, await audioUrl(port));
-            } catch (e) {
-                console.error(e);
-            } finally {
-                s.close();
-            }
-        });
-    } catch (e) {
-        console.error(e);
-        process.exit(-1);
-    }
+            const s = createAudioServer(buf);
+            s.listen(port, async () => {
+                try {
+                    await playContent(ip, await audioUrl(port));
+                    s.close(() => resolve());
+                } catch (e) {
+                    s.close(() => reject(e));
+                }
+            });
+        } catch (e) {
+            reject(e);
+        }
+    });
 };
